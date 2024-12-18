@@ -12,7 +12,6 @@ public static class AppPreparation
             var dbContext = scope.ServiceProvider.GetRequiredService<EntityContext>();
 
             await dbContext.Database.EnsureCreatedAsync();
-      
         }
         catch (Exception e)
         {

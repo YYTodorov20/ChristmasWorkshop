@@ -1,32 +1,54 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Web;
 using ChristmasTree.Models;
+using ChristmasTree.Services.Factory;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ChristmasTree.Controllers;
-
-public class HomeController : Controller
+namespace ChristmasTree.Presentation.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
+    [Route("/")]
+    [ApiController]
+    public class HomeController : ControllerBase
+    {
+        private readonly LightFactory lightFactory;
+        private readonly ILogger<HomeController> logger;
+        private readonly LightService lightService;
 
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-    [HttpGet("/")]
-    public IActionResult Index()
-    {
-        return View();
-    }
-    
-    [HttpGet("/Privacy")]
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public HomeController(
+            LightFactory lightFactory,
+            ILogger<HomeController> logger,
+            LightService lightService)
+        {
+            this.lightFactory = lightFactory;
+            this.logger = logger;
+            this.lightService = lightService;
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        [HttpGet]
+        public async Task<string> Get()
+        {
+            return JsonSerializer.Serialize(await this.lightService.GetAllAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] PostViewModel model)
+        {
+            if (!this.Request.Headers.TryGetValue("Christmas-Token", out var ct))
+            {
+                this.logger.LogError("No christmas token provided");
+                return this.BadRequest();
+            }
+
+            if (model.desc != null)
+            {
+                model.desc = HttpUtility.HtmlEncode("\u200e" + model.desc);
+                var light = await this.lightFactory.CreateLight(model.desc, ct!);
+                await this.lightService.AddAsync(light);
+                this.logger.LogInformation($"Created light: {JsonSerializer.Serialize(light)}");
+                return this.Ok();
+            }
+
+            return this.BadRequest();
+        }
     }
 }
