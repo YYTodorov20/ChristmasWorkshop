@@ -1,4 +1,4 @@
-namespace ChristmasAPI.Models;
+namespace ChristmasTree.Models;
 
 public class ErrorViewModel
 {

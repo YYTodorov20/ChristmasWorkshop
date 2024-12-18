@@ -1,19 +1,20 @@
-using ChristmasAPI.Data;
+using ChristmasTree;
+using ChristmasTree.Data;
 using Microsoft.EntityFrameworkCore;
-using ChristmasAPI.Models; // Make sure to include the namespace for your DbContext
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<EntityContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddControllersWithViews();
 
-// Register the DbContext with the connection string
-builder.Services.AddDbContext<ChristmasDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddMvc();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+await app.PrepareAsync();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -21,15 +22,15 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
+app.MapControllers();
+/*app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");*/
 
 app.Run();

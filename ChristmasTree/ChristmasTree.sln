@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristmasTree.Presentation", "ChristmasTree.Presentation\ChristmasTree.Presentation.csproj", "{8A3907AF-E92D-4368-AF4F-C76798867879}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristmasTree.Data", "ChristmasTree.Data\ChristmasTree.Data.csproj", "{DF450F6F-55EA-45E5-B38E-BF2DE6D6842E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristmasTree.Services", "ChristmasTree.Services\ChristmasTree.Services.csproj", "{892EBA58-47C9-4E8F-BFEB-1DA82E424A19}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8A3907AF-E92D-4368-AF4F-C76798867879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A3907AF-E92D-4368-AF4F-C76798867879}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A3907AF-E92D-4368-AF4F-C76798867879}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A3907AF-E92D-4368-AF4F-C76798867879}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF450F6F-55EA-45E5-B38E-BF2DE6D6842E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF450F6F-55EA-45E5-B38E-BF2DE6D6842E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF450F6F-55EA-45E5-B38E-BF2DE6D6842E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF450F6F-55EA-45E5-B38E-BF2DE6D6842E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{892EBA58-47C9-4E8F-BFEB-1DA82E424A19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{892EBA58-47C9-4E8F-BFEB-1DA82E424A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{892EBA58-47C9-4E8F-BFEB-1DA82E424A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{892EBA58-47C9-4E8F-BFEB-1DA82E424A19}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

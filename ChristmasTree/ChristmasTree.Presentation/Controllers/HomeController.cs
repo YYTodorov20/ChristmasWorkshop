@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ChristmasAPI.Models;
+using ChristmasTree.Models;
 
-namespace ChristmasAPI.Controllers;
+namespace ChristmasTree.Controllers;
 
 public class HomeController : Controller
 {
@@ -12,12 +12,13 @@ public class HomeController : Controller
     {
         _logger = logger;
     }
-
+    [HttpGet("/")]
     public IActionResult Index()
     {
         return View();
     }
-
+    
+    [HttpGet("/Privacy")]
     public IActionResult Privacy()
     {
         return View();
