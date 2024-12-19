@@ -4,6 +4,7 @@ using ChristmasTree.Models;
 using ChristmasTree.Services;
 using ChristmasTree.Services.Factory;
 using ChristmasTree.Services.Services;
+using ChristmasTree.Services.Token;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChristmasTree.Presentation.Controllers;
@@ -12,18 +13,18 @@ namespace ChristmasTree.Presentation.Controllers;
     [ApiController]
     public class HomeController : ControllerBase
     {
-        private readonly LightFactory lightFactory;
         private readonly ILogger<HomeController> logger;
         private readonly LightService lightService;
+        private readonly TokenAccessor tokenAccessor;
 
         public HomeController(
-            LightFactory lightFactory,
             ILogger<HomeController> logger,
-            LightService lightService)
+            LightService lightService,
+            TokenAccessor tokenAccessor)
         {
-            this.lightFactory = lightFactory;
             this.logger = logger;
             this.lightService = lightService;
+            this.tokenAccessor = tokenAccessor;
         }
 
         [HttpGet]
@@ -35,7 +36,9 @@ namespace ChristmasTree.Presentation.Controllers;
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PostViewModel model)
         {
-            if (!this.Request.Headers.TryGetValue("Christmas-Token", out var ct))
+            var ct = this.tokenAccessor.GetChristmasToken();
+
+            if (string.IsNullOrEmpty(ct))
             {
                 this.logger.LogError("No christmas token provided");
                 return this.BadRequest();
@@ -44,9 +47,7 @@ namespace ChristmasTree.Presentation.Controllers;
             if (model.desc != null)
             {
                 model.desc = HttpUtility.HtmlEncode("\u200e" + model.desc);
-                var light = await this.lightFactory.CreateLight(model.desc, ct!);
-                await this.lightService.AddAsync(light);
-                this.logger.LogInformation($"Created light: {JsonSerializer.Serialize(light)}");
+                await this.lightService.AddAsync(model.desc, ct!);
                 return this.Ok();
             }
 

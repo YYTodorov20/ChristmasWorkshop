@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace ChristmasTree.Data.Models;
 
@@ -18,14 +19,17 @@ public class LightModel
     public float Radius { get; set; }
 
     [Required]
-    public string? Color { get; set; }
+    required public string Color { get; set; }
 
     [Required]
-    public string? Effects { get; set; }
+    required public string Effects { get; set; }
 
     [Required]
-    public string? Desc { get; set; }
+    public string? Description { get; set; }
 
     [Required]
     public string? Ct { get; set; }
+
+    [Required]
+    public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 }

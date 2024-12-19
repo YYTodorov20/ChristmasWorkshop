@@ -1,8 +1,8 @@
 using ChristmasTree;
 using ChristmasTree.Data;
-using ChristmasTree.Services;
 using ChristmasTree.Services.Factory;
 using ChristmasTree.Services.Services;
+using ChristmasTree.Services.Token;
 using ChristmasTree.Services.Verifier;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<EntityContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<TokenAccessor>();
+builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<LightFactory>();
 builder.Services.AddScoped<LightService>();
 builder.Services.AddHttpClient<LightVerifier>(client =>

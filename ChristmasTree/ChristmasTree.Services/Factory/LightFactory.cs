@@ -1,52 +1,52 @@
-﻿using System.Text.Json;
-using ChristmasTree.Data.Models;
-using Microsoft.Extensions.Primitives;
+﻿using ChristmasTree.Data.Models;
 
 namespace ChristmasTree.Services.Factory
 {
     public class LightFactory
     {
         private readonly Random random = new ();
-        private readonly HttpClient httpClient;
-        private readonly HashSet<(int x, int y, float radius, string color, string effects, string desc, string ct)> usedCombinations = new ();
 
         private readonly List<string> colors = new () { "blue-lt", "blue-dk", "red", "gold-lt", "gold-dk" };
         private readonly List<string> effects = new () { "g1", "g2", "g3" };
 
-        public LightFactory(HttpClient httpClient)
+        public async Task<LightModel> CreateLight(string description, string token, LightModel? lastLight)
         {
-            this.httpClient = httpClient;
-        }
+            var currentColors = this.colors;
+            var currentEffects = this.effects;
 
-        public async Task<LightModel> CreateLight(string desc, StringValues christmasToken)
-        {
-            while (true)
+            if (lastLight != null)
+            {
+                currentColors.Remove(lastLight!.Color);
+                currentEffects.Remove(lastLight!.Effects);
+            }
+
+            const int maxAttempts = 10;
+
+            #pragma warning disable CS0162 // Unreachable code detected
+            for (int i = 0; i < maxAttempts; i++)
             {
                 var (x, y) = this.GenerateCoordinatesWithinTriangle();
                 int ix = (int)x;
                 int iy = (int)y;
                 float radius = (float)((this.random.NextDouble() * (6 - 3)) + 3);
-                string color = this.colors[this.random.Next(this.colors.Count)];
-                string effect = this.effects[this.random.Next(this.effects.Count)];
-                string ct = christmasToken.ToString();
+                string color = currentColors[this.random.Next(currentColors.Count)];
+                string effect = currentEffects[this.random.Next(currentEffects.Count)];
+                string ct = token.ToString();
 
-                var key = (x: ix, y: iy, radius: radius, color: color, effects: effect, desc: desc, ct: ct);
-
-                if (!this.usedCombinations.Contains(key))
+                return new LightModel
                 {
-                    this.usedCombinations.Add(key);
-                    return new LightModel
-                    {
-                        x = ix,
-                        y = iy,
-                        Radius = radius,
-                        Color = color,
-                        Effects = effect,
-                        Desc = desc,
-                        Ct = ct,
-                    };
-                }
+                    x = ix,
+                    y = iy,
+                    Radius = radius,
+                    Color = color,
+                    Effects = effect,
+                    Description = description,
+                    Ct = ct,
+                };
             }
+#pragma warning restore CS0162 // Unreachable code detected
+
+            throw new InvalidDataException("Couldn't create Light.");
         }
 
         private (double, double) GenerateCoordinatesWithinTriangle()

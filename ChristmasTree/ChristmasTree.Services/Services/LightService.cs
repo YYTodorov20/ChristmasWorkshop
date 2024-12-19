@@ -1,71 +1,52 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ChristmasTree.Data;
 using ChristmasTree.Data.Models;
 using ChristmasTree.Services.Factory;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Identity.Client.Extensions.Msal;
+using ChristmasTree.Services.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChristmasTree.Services.Services
 {
     public class LightService
     {
-        private readonly List<LightModel> storage = new ();
+        private readonly EntityContext entityContext;
         private readonly LightFactory lightFactory;
-        private int idCounter = 1;
+        private readonly TokenService tokenService;
 
-        public LightService(LightFactory lightFactory)
+        public LightService(EntityContext context, LightFactory lightFactory, TokenService tokenService)
         {
+            this.entityContext = context;
             this.lightFactory = lightFactory;
+            this.tokenService = tokenService;
         }
 
-        public Task<LightModel> AddAsync(LightModel light)
+        public async Task AddAsync(string description, string token)
         {
-            light.Id = this.idCounter++;
-            this.storage.Add(light);
-            return Task.FromResult(light);
+            await this.tokenService.DeleteTokens(token);
+
+            var lastLight = await this.entityContext.LightModels.OrderByDescending(entityContext => entityContext.CreationDate).FirstOrDefaultAsync();
+
+            // validator here
+
+            var newLight = await this.lightFactory.CreateLight(description, token, lastLight);
+
+            this.entityContext.LightModels.Add(newLight);
+            await this.entityContext.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<LightModel>> GetAllAsync()
+        public async Task<IEnumerable<LightModelDTO>> GetAllAsync()
         {
-            return Task.FromResult(this.storage.AsEnumerable());
-        }
-
-        public Task<LightModel?> GetByIdAsync(int id)
-        {
-            var result = this.storage.FirstOrDefault(l => l.Id == id);
-            return Task.FromResult(result);
-        }
-
-        public Task<LightModel?> UpdateAsync(int id, LightModel updatedLight)
-        {
-            var existing = this.storage.FirstOrDefault(l => l.Id == id);
-            if (existing == null)
+            var lights = await this.entityContext.LightModels.ToListAsync();
+            return lights.Select(light => new LightModelDTO
             {
-                return Task.FromResult<LightModel?>(null);
-            }
-
-            existing.x = updatedLight.x;
-            existing.y = updatedLight.y;
-            existing.Radius = updatedLight.Radius;
-            existing.Color = updatedLight.Color;
-            existing.Effects = updatedLight.Effects;
-            existing.Desc = updatedLight.Desc;
-            existing.Ct = updatedLight.Ct;
-
-            return Task.FromResult((LightModel?)existing);
-        }
-
-        public Task<bool> DeleteAsync(int id)
-        {
-            var model = this.storage.FirstOrDefault(l => l.Id == id);
-            if (model == null)
-            {
-                return Task.FromResult(false);
-            }
-
-            this.storage.Remove(model);
-            return Task.FromResult(true);
+                Id = light.Id,
+                x = light.x,
+                y = light.y,
+                Radius = light.Radius,
+                Color = light.Color,
+                Effects = light.Effects,
+                Description = light.Description,
+                Ct = light.Ct,
+            });
         }
     }
 }
