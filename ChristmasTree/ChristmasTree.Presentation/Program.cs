@@ -10,8 +10,12 @@ builder.Services.AddDbContext<EntityContext>(options =>
 
 builder.Services.AddScoped<LightFactory>();
 builder.Services.AddScoped<LightService>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<LightVerifier>(client =>
+{
+    client.BaseAddress = new Uri("https://polygon.gsk567.com");
+});
 
+builder.Services.AddControllersWithViews();
 builder.Services.AddMvc();
 
 builder.Services.AddCors(options =>
