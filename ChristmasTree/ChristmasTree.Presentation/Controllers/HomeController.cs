@@ -4,8 +4,8 @@ using ChristmasTree.Models;
 using ChristmasTree.Services.Factory;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ChristmasTree.Presentation.Controllers
-{
+namespace ChristmasTree.Presentation.Controllers;
+
     [Route("/")]
     [ApiController]
     public class HomeController : ControllerBase
@@ -51,4 +51,3 @@ namespace ChristmasTree.Presentation.Controllers
             return this.BadRequest();
         }
     }
-}
