@@ -1,6 +1,7 @@
 using ChristmasTree;
 using ChristmasTree.Data;
 using ChristmasTree.Services.Factory;
+using ChristmasTree.Services.Verifier;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
